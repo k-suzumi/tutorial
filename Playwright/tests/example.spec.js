@@ -1,19 +1,12 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test("本番環境と検証環境のスクリーンショット比較", async ({ page }, testInfo) => {
+  await page.goto("https://v2.spaia-keiba.com/races/20250301")
+  await page.waitForFunction(() => document.fonts.ready);
+  await page.screenshot({ path: `${testInfo.snapshotPath("result.png")}`, fullPage: true })
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
-
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
-});
+  await page.goto("https://staging-beta.spaia-keiba.com/races/20250301")
+  await page.waitForFunction(() => document.fonts.ready);
+  expect(await page.screenshot({ fullPage: true })).toMatchSnapshot({ name: "result.png" })
+})

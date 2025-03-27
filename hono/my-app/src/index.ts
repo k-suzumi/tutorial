@@ -2,8 +2,22 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { prettyJSON } from 'hono/pretty-json';
+import fs from 'fs';
+import path from 'path'
 
 const app = new Hono();
+
+// import { exec } from 'child_process';
+
+// exec('npx playwright test', (error, stdout, stderr) => {
+//   if (error) {
+//     console.error(`実行エラー: ${error.message}`);
+//     return;
+//   }
+// });
+
+const TestResultIMG = fs.readdirSync('playwright-report/data');
+console.log(TestResultIMG);
 
 const keibadata = [
   {
@@ -23,7 +37,6 @@ const keibadata = [
   }
 ]
 app.use(prettyJSON());
-// console.log(keibadata[0]);
 
 app.get('/', (c) => {
   return c.html(`
@@ -53,24 +66,41 @@ app.get("/posts/:id", (c) => {
   }
 })
 
-app.get("/data", (c) => {
-  let result = '';
-  for (let i = 0; i < Object.keys(keibadata).length; i++) {
-    result += JSON.stringify(keibadata[i], null, 2);
-  }
-  return c.html(result);
+app.get("/playwright", async(c) => {
+  const url = 'http://localhost:9323';
+  const response = await fetch(url);
+  const htmlContent = await response.text();
+  return c.html(htmlContent);
 })
 
-app.get("/data/:id", (c) => {
-  const id = Number(c.req.param("id")); 
-  const data = keibadata[id - 1];
-  if(data){
-  return c.html(JSON.stringify(data, null, 2));
-  }else{
-    return c.html("Data not found");
-  }
-});
+app.get('/data/*', (c) => {
+  const filePath = decodeURIComponent(c.req.path.replace('/data/', ''))
+  const fullPath = path.resolve('./playwright-report/data', filePath)
 
+  if (!fs.existsSync(fullPath)) {
+    return c.notFound()
+  }
+  return c.body(fs.readFileSync(fullPath), {
+    headers: {
+      'Content-Type': 'image/png'
+    }
+  })
+})
+
+
+app.get('/images', (c) => {
+  const reportDataPath = path.resolve('./playwright-report/data')
+  
+  try {
+    const imageLinks = fs.readdirSync(reportDataPath)
+      .filter(file => file.toLowerCase().endsWith('.png'))
+      .map(filename => `/data/${filename}`)
+    
+    return c.text(imageLinks.join('\n'))
+  } catch (error) {
+    return c.text('Could not read image directory', 500)
+  }
+})
 
 serve({
   fetch: app.fetch,

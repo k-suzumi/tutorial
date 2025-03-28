@@ -4,18 +4,19 @@ import { serveStatic } from '@hono/node-server/serve-static';
 import { prettyJSON } from 'hono/pretty-json';
 import fs from 'fs';
 import path from 'path';
+import mysql from 'mysql2';
 const config = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
 
 const app = new Hono();
 
-import { exec } from 'child_process';
+// import { exec } from 'child_process';
 
-exec('npx playwright test', (error, stdout, stderr) => {
-  if (error) {
-    console.error(`実行エラー: ${error.message}`);
-    return;
-  }
-});
+// exec('npx playwright test', (error, stdout, stderr) => {
+//   if (error) {
+//     console.error(`実行エラー: ${error.message}`);
+//     return;
+//   }
+// });
 
 const keibadata = [
   {
@@ -47,6 +48,7 @@ app.get('/', (c) => {
       <h1>Hello HONO!!</h1>
       <a href="./playwright">playwright</a>
       <a href="./configs">config</a>
+      <a href="./database">database</a>
     </body>
     </html>
   `);
@@ -86,6 +88,27 @@ app.get('/data/*', (c) => {
 })
 const config2 = JSON.stringify(config,null, 2);
 app.get("/configs", (c) => c.html(config2));
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'user',
+  password: 'p@ssw0rd',
+  database: 'hoge-db',
+  port: 3306,
+});
+
+app.get('/database', (c) => {
+  return new Promise((resolve, reject) => {
+    connection.query('SELECT * FROM test_results', (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        reject(err);
+      } else {
+        resolve(c.json(results));
+      }
+    });
+  });
+});
 
 serve({
   fetch: app.fetch,

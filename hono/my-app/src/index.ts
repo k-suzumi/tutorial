@@ -3,21 +3,19 @@ import { Hono } from 'hono';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { prettyJSON } from 'hono/pretty-json';
 import fs from 'fs';
-import path from 'path'
+import path from 'path';
+const config = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
 
 const app = new Hono();
 
-// import { exec } from 'child_process';
+import { exec } from 'child_process';
 
-// exec('npx playwright test', (error, stdout, stderr) => {
-//   if (error) {
-//     console.error(`実行エラー: ${error.message}`);
-//     return;
-//   }
-// });
-
-const TestResultIMG = fs.readdirSync('playwright-report/data');
-console.log(TestResultIMG);
+exec('npx playwright test', (error, stdout, stderr) => {
+  if (error) {
+    console.error(`実行エラー: ${error.message}`);
+    return;
+  }
+});
 
 const keibadata = [
   {
@@ -47,6 +45,8 @@ app.get('/', (c) => {
     </head>
     <body>
       <h1>Hello HONO!!</h1>
+      <a href="./playwright">playwright</a>
+      <a href="./configs">config</a>
     </body>
     </html>
   `);
@@ -67,10 +67,8 @@ app.get("/posts/:id", (c) => {
 })
 
 app.get("/playwright", async(c) => {
-  const url = 'http://localhost:9323';
-  const response = await fetch(url);
-  const htmlContent = await response.text();
-  return c.html(htmlContent);
+  const html = fs.readFileSync('./playwright-report/index.html', 'utf8')
+  return c.html(html);
 })
 
 app.get('/data/*', (c) => {
@@ -86,21 +84,8 @@ app.get('/data/*', (c) => {
     }
   })
 })
-
-
-app.get('/images', (c) => {
-  const reportDataPath = path.resolve('./playwright-report/data')
-  
-  try {
-    const imageLinks = fs.readdirSync(reportDataPath)
-      .filter(file => file.toLowerCase().endsWith('.png'))
-      .map(filename => `/data/${filename}`)
-    
-    return c.text(imageLinks.join('\n'))
-  } catch (error) {
-    return c.text('Could not read image directory', 500)
-  }
-})
+const config2 = JSON.stringify(config,null, 2);
+app.get("/configs", (c) => c.html(config2));
 
 serve({
   fetch: app.fetch,

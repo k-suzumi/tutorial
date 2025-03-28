@@ -99,7 +99,7 @@ const connection = mysql.createConnection({
 
 app.get('/database', (c) => {
   return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM user', (err, results) => {
+    connection.query('SELECT * FROM test_results', (err, results) => {
       if (err) {
         console.error('Error executing query:', err);
         reject(err);

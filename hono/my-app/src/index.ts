@@ -9,15 +9,6 @@ const config = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
 
 const app = new Hono();
 
-// import { exec } from 'child_process';
-
-// exec('npx playwright test', (error, stdout, stderr) => {
-//   if (error) {
-//     console.error(`実行エラー: ${error.message}`);
-//     return;
-//   }
-// });
-
 const keibadata = [
   {
     id:"1",
@@ -35,6 +26,15 @@ const keibadata = [
     color:"brown"
   }
 ]
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'user',
+  password: 'p@ssw0rd',
+  database: 'hoge-db',
+  port: 3306,
+});
+
 app.use(prettyJSON());
 
 app.get('/', (c) => {
@@ -88,14 +88,6 @@ app.get('/data/*', (c) => {
 })
 const config2 = JSON.stringify(config,null, 2);
 app.get("/configs", (c) => c.html(config2));
-
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'user',
-  password: 'p@ssw0rd',
-  database: 'hoge-db',
-  port: 3306,
-});
 
 app.get('/database', (c) => {
   return new Promise((resolve, reject) => {

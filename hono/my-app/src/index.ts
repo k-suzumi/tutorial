@@ -33,6 +33,7 @@ const connection = await mysql.createConnection({
   password: 'p@ssw0rd',
   database: 'hoge-db',
   port: 3306,
+  namedPlaceholders:true,
 });
 
 app.use(prettyJSON());
@@ -69,11 +70,13 @@ app.get("/posts/:id", (c) => {
   }
 })
 
+//playwrightテスト結果のページ
 app.get("/playwright", async (c) => {
   const html = fs.readFileSync('./playwright-report/index.html', 'utf8')
   return c.html(html);
 })
 
+//テスト結果のスクショ等
 app.get('/data/*', (c) => {
   const filePath = decodeURIComponent(c.req.path.replace('/data/', ''))
   const fullPath = path.resolve('./playwright-report/data', filePath)
@@ -125,17 +128,16 @@ app.get('/add-request', (c) => {
 app.post('/submit-queue', async (c) => {
   try {
     const body = await c.req.parseBody();
-    const request = body.request;
+    const request = JSON.stringify(body.request);
 
     if (!request) {
       console.log("リクエストが空です");
     }
 
     const [result] = await connection.query(
-      'INSERT INTO queue (request) VALUES (?)',
-      [request]
+      'INSERT INTO queue (config,is_executed) VALUES (:request,:flag)',
+      {request:request,flag:0}
     );
-    console.log(result)
     return c.json({
       success: true,
       message: 'リクエストが正常に保存されました。',

@@ -1,64 +1,64 @@
 {
-    "environments": [
+  "environments": [
+    {
+      "env_name": "prod",
+      "host": "https://v2.spaia-keiba.com",
+      "name": "本番環境"
+    },
+    {
+      "env_name": "stage",
+      "host": "https://staging-beta.spaia-keiba.com",
+      "name": "検証環境"
+    },
+    {
+      "env_name": "dev",
+      "host": "https://dev-keiba-beta.spaia.net",
+      "name": "開発環境"
+    },
+    {
+      "env_name": "gcdev",
+      "host": "https://gcdev-keiba-beta.spaia.net",
+      "name": "GC開発環境"
+    }
+  ],
+  "Cookies": [
+    {
+      "name": "prod_v2_access_token",
+      "domain": "v2.spaia-keiba.com",
+      "path": "/"
+    },
+    {
+      "name": "v2_access_token",
+      "domain": "staging-beta.spaia-keiba.com",
+      "path": "/"
+    }
+  ],
+  "pages": [
+    {
+      "path": "/races",
+      "steps": [
         {
-            "env_name": "prod",
-            "host": "https://v2.spaia-keiba.com",
-            "name": "本番環境"
+          "action": "load"
         },
         {
-            "env_name": "stage",
-            "host": "https://staging-beta.spaia-keiba.com",
-            "name": "検証環境"
-        },
-        {
-            "env_name": "dev",
-            "host": "https://dev-keiba-beta.spaia.net",
-            "name": "開発環境"
-        },
-        {
-            "env_name": "gcdev",
-            "host": "https://gcdev-keiba-beta.spaia.net",
-            "name": "GC開発環境"
+          "action": "screenshot"
         }
-    ],
-    "Cookies": [
+      ]
+    },
+    {
+      "path": "/race/2502010601/race-cards",
+      "steps": [
         {
-            "name": "prod_v2_access_token",
-            "domain": "v2.spaia-keiba.com",
-            "path": "/"
+          "action": "load"
         },
         {
-            "name": "v2_access_token",
-            "domain": "staging-beta.spaia-keiba.com",
-            "path": "/"
-        }
-    ],
-    "pages": [
-        {
-            "path": "/races",
-            "steps": [
-                {
-                    "action": "load"
-                },
-                {
-                    "action": "screenshot"
-                }
-            ]
+          "action": "click",
+          "target": "._tags_1yh94_326 > .MuiButtonBase-root"
         },
         {
-            "path": "/race/2502010601/race-cards",
-            "steps": [
-                {
-                    "action": "load"
-                },
-                {
-                    "action": "click",
-                    "target": "._tags_1yh94_326 > .MuiButtonBase-root"
-                },
-                {
-                    "action": "screenshot"
-                }
-            ]
+          "action": "screenshot"
         }
-    ]
+      ]
+    }
+  ]
 }

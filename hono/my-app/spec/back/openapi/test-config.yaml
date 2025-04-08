@@ -1,0 +1,116 @@
+openapi: 3.0.4
+
+info:
+  title: "テスト"
+  description: "テスト"
+  version: "1.0.0"
+  
+paths:
+  "/edit-config":
+    get:
+      summary: API for retrieving test config
+      parameters:
+        - $ref: "./../../components/parameters/raceId.yaml"
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  environments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        env_name:
+                          type: string
+                        host:
+                          type: string
+                        name:
+                          type: string
+                  Cookies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        domain:
+                          type: string
+                        path:
+                          type: string
+                  pages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          type: string
+                        steps:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              action: 
+                                type: string
+                       
+            example:
+              $ref: "../../examples/race/myJockeyInfo.yaml#/example"
+  "/post-config":
+    post:
+      summary: API for update test config
+      parameters:
+        - $ref: "./../../components/parameters/raceId.yaml"
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                  environments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        env_name:
+                          type: string
+                        host:
+                          type: string
+                        name:
+                          type: string
+                  Cookies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        domain:
+                          type: string
+                        path:
+                          type: string
+                  pages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          type: string
+                        steps:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              action: 
+                                type: string
+      responses:
+        "200":
+          description: ok - myPrediction created or updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+              # Include properties for successful response (e.g., id, message)

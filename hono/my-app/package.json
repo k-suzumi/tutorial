@@ -2,7 +2,7 @@
   "name": "my-app",
   "type": "module",
   "scripts": {
-    "dev": "src/index.ts"
+    "dev": "node src/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.0",

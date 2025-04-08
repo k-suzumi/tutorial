@@ -1,0 +1,9 @@
+services:
+  redoc:
+    image: redocly/redoc
+    environment:
+      - SPEC_URL=/openapi/test-config.yaml
+    volumes:
+      - ./back/openapi:/usr/share/nginx/html/openapi:ro
+    ports:
+      - "3032:80"
